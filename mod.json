@@ -1,0 +1,27 @@
+{
+	"geode": "4.10.0",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "zilko.jam",
+	"name": "Jam",
+	"version": "v1.0.0",
+	"developer": "Zilko",
+	"description": "",
+	"dependencies": {
+    	"cvolton.level-id-api": ">=v1.2.3",
+    	"geode.node-ids": ">=v1.21.1",
+	  	"capeling.garage-stats-menu": ">=v1.0.1"
+	},
+	"resources": {
+		"sprites": [
+			"resources/*.png"
+		],
+		"files": [
+			"resources/*.mp3"
+		]
+	}
+}
