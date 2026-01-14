@@ -23,6 +23,8 @@ void ProMenuGameLayer::destroyPlayer() {
     auto& jm = JamManager::get();
     auto f = m_fields.self();
 
+    FMODAudioEngine::get()->playEffectAdvanced("pop.mp3"_spr, 0.8f + Utils::getRandomInt(9, 40) / 100.f, 1.f, 0.4f, 1.f, false, false, 45, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
+
     jm.rewardJam(1);
 
     if (f->m_rewardLayer) {

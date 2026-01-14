@@ -20,6 +20,8 @@ void ProChallengeNode::onClaimReward(CCObject* sender) {
 
     jm.m_challengesPageShouldRewardJam = false;
     jm.m_currencyLayerShouldRewardJam = false;
+    
+    FMODAudioEngine::get()->playEffectAdvanced("lid.mp3"_spr, 0.7f, 1.f, 0.75f, 1.f, false, false, 45, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
 }
 
 bool ProChallengeNode::init(GJChallengeItem* p0, ChallengesPage* p1, bool p2) {
@@ -30,7 +32,7 @@ bool ProChallengeNode::init(GJChallengeItem* p0, ChallengesPage* p1, bool p2) {
     auto f = m_fields.self();
 
     if (p0) {
-        f->m_jamReward = p0->m_reward.value() / 5.f * 2;
+        f->m_jamReward = p0->m_reward.value() / 5.f * 12;
     }
 
     auto rewardLabel = getChildByID("reward-label");

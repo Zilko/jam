@@ -56,6 +56,9 @@ void ProEndLevelLayer::addRewardLayer() {
 	);
 	rewardLayer->setID("jam-reward-layer"_spr);
 
+	FMODAudioEngine::get()->playEffect("pop.mp3"_spr, 1.f, 1.f, 0.2f);
+	FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.15f, 1.f, 0.7f);
+
 	addChild(rewardLayer);
 
 	jm.m_currencyLayerShouldRewardJam = false;
@@ -95,10 +98,21 @@ void ProEndLevelLayer::showLayer(bool p0) {
 	m_mainLayer->addChild(f->m_jamContainer, 10);
 	
 	auto delay = 0.f;
+	auto lidDelay = 0.f;
 	
 	if (m_coinsToAnimate && !GameManager::get()->getGameVariable("0168")) {
 		delay = m_coinsToAnimate->count() * 0.35f + 0.7f;
+		lidDelay = delay - 0.7f;
 	}
+
+	runAction(CCSequence::create(
+		CCDelayTime::create(lidDelay),
+		CallFuncExt::create([] {
+			FMODAudioEngine::get()->playEffect("lid.mp3"_spr, 0.7f, 1.f, 0.4f);
+			FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.4f, 1.f, 0.24f);
+		}),
+		nullptr
+	));
 	
 	auto runFinished = [&](CCNode* node, SEL_CallFunc func) {
 		node->runAction(CCSequence::create(
@@ -171,6 +185,9 @@ void ProEndLevelLayer::playEndEffect() {
 
 	jm.m_currencyLayerShouldRewardJam = true;
 	jm.m_currencyLayerJamAmount = f->m_jamReward;
+
+	FMODAudioEngine::get()->playEffect("pop.mp3"_spr, 1.f, 1.f, 1.2f);
+	FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.15f, 1.f, 0.7f);
 
 	EndLevelLayer::playEndEffect();
 

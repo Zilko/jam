@@ -36,11 +36,11 @@ bool ProSecretRewardsLayer::init(bool p0) {
     }
 
 
-    auto spr = CCSprite::createWithSpriteFrameName("shopRope2_001.png");
+    auto spr = CCSprite::create("rope-1.png"_spr);
 
     for (int i = 0; i < 6; i++) {
-        auto subSpr = CCSprite::createWithSpriteFrameName("shopRope2_2_001.png");
-        subSpr->setPosition(ccp(24 - i, 76 + (subSpr->getContentHeight() - 1) * i));
+        auto subSpr = CCSprite::create("rope-2.png"_spr);
+        subSpr->setPosition(ccp(22 - i, 76 + (subSpr->getContentHeight() - 1) * i));
 
         spr->addChild(subSpr);
     }

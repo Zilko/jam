@@ -21,4 +21,6 @@ void ProChallengesPage::claimItem(ChallengeNode* p0, GJChallengeItem* p1, CCPoin
     ChallengesPage::claimItem(p0, p1, p2);
 
     jm.m_challengesPageShouldRewardJam = false;
+    
+    FMODAudioEngine::get()->playEffectAdvanced("lid.mp3"_spr, 0.7f, 1.f, 0.75f, 1.f, false, false, 45, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
 }

@@ -38,9 +38,10 @@ void ProLevelCell::addNormalCell() {
 	m_mainLayer->addChild(lbl);
 
 	auto mostRight = lbl->getPositionX() + lbl->getScaledContentWidth();
+	auto limit = m_level->m_listPosition != 0 ? 290.f : 342.67f;
 
-	if (mostRight > 342.67f) {
-		auto scale = 342.67f / mostRight / 1.31162f;
+	if (mostRight > limit) {
+		auto scale = limit / mostRight / 1.31162f;
 
 		referenceLabel->setScale(referenceLabel->getScale() * scale);
 		referenceLabel->setPositionX(referenceLabel->getPositionX() - 3 * scale);
@@ -150,10 +151,6 @@ void ProLevelCell::loadCustomLevelCell() {
 	LevelCell::loadCustomLevelCell();
 
 	if (!JamManager::get().canLevelHaveJam(m_level)) {
-		return;
-	}
-	
-	if (m_level->m_listPosition != 0) {
 		return;
 	}
 	

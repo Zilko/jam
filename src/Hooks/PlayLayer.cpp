@@ -174,7 +174,7 @@ void ProPlayLayer::showNewBest(bool newReward, int orbs, int diamonds, bool demo
 
 void ProPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
     auto& jm = JamManager::get();
-
+    
 	if (
 		(player != m_player1 && player != m_player2)
         || !player
@@ -187,7 +187,7 @@ void ProPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
 	) {
 		return PlayLayer::destroyPlayer(player, object);
 	}
-    
+
     auto progress = getCurrentPercent() / 100.f;
     auto prevProgress = jm.getLevelJamProgress(m_level);
 
@@ -196,10 +196,6 @@ void ProPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
     }
 
     jm.setLevelJamProgress(m_level, progress);
-
-    if (progress < 0.5f) {
-        return PlayLayer::destroyPlayer(player, object);;
-    }
 
     auto jam = jm.getLevelJamForProgress(m_level, progress) - jm.getLevelJamForProgress(m_level, prevProgress);
 
@@ -222,7 +218,29 @@ void ProPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
 		modifyJamReward(jam);
 	} else {
 		addJamReward(jam);
+        stopActionByTag(16);
+
+        auto seq = CCSequence::create(
+            CCDelayTime::create(2.f),
+            CCCallFunc::create(this, callfunc_selector(PlayLayer::delayedResetLevel)),
+            nullptr
+        );
+        seq->setTag(16);
+        
+        runAction(seq);
 	}
+
+    FMODAudioEngine::get()->playEffectAdvanced("lid.mp3"_spr, 0.6f, 1.f, 0.45f, 1.f, false, false, 50, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
+	FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.35f, 1.f, 0.05f);
+
+    runAction(CCSequence::create(
+        CCDelayTime::create(0.01f),
+        CallFuncExt::create([] {
+            FMODAudioEngine::get()->playEffect("pop.mp3"_spr, 0.49f, 1.f, 0.3f);
+            FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.35f, 1.f, 0.1f);
+        }),
+        nullptr
+    ));
 
     f->m_didShowNewBest = false;
 
@@ -238,9 +256,10 @@ void ProPlayLayer::levelComplete() {
     auto& jm = JamManager::get();
 	
 	if (
-        !jm.canLevelHaveJam(m_level)
-        || m_isPracticeMode
+        m_isPracticeMode
         || m_isTestMode
+        || !jm.canLevelHaveJam(m_level)
+        || jm.getLevelJamProgress(m_level) >= 1.f
     ) {
 		return PlayLayer::levelComplete();
 	}
@@ -248,6 +267,10 @@ void ProPlayLayer::levelComplete() {
 	auto f = m_fields.self();
 
 	f->m_jamReward = jm.getTotalLevelJam(m_level) - jm.getLevelJamForProgress(m_level, jm.getLevelJamProgress(m_level));
+
+    if (f->m_jamReward <= 0) {
+        return PlayLayer::levelComplete();
+    }
 
 	jm.rewardJam(f->m_jamReward);
 	jm.setLevelJamProgress(m_level, 1.f);

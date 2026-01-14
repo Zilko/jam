@@ -14,7 +14,7 @@ void ProRewardUnlockLayer::step3() {
     ) {
         return RewardUnlockLayer::step3();
     }
-
+log::debug("{}", m_chestType);
     jm.m_nextRewardUnlockLayerCanRewardJam = false;
 
     if (m_rewardItem->m_rewardObjects->count() == 1) {
@@ -31,12 +31,16 @@ void ProRewardUnlockLayer::step3() {
         return RewardUnlockLayer::step3();
     }
 
+    jm.rewardJam(jam);
+
     jm.m_currencyLayerShouldRewardJam = true;
     jm.m_currencyLayerJamAmount = jam;
 
     RewardUnlockLayer::step3();
 
     jm.m_currencyLayerShouldRewardJam = false;
+
+    FMODAudioEngine::get()->playEffectAdvanced("lid.mp3"_spr, 0.7f, 1.f, 0.9f, 1.f, false, false, 45, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
 
     auto nodes = m_rewardItem->m_rewardObjects->count();
     auto containers = std::array<CCNode*, 6>{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
