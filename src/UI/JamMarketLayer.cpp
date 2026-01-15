@@ -1,5 +1,7 @@
 #include "JamMarketLayer.hpp"
 
+#include "../Other/Utils.hpp"
+
 CCScene* JamMarketLayer::scene() {
     auto layer = new JamMarketLayer();
 
@@ -54,6 +56,8 @@ bool JamMarketLayer::init() {
     setKeyboardEnabled(true);
     setKeypadEnabled(true);
 
+    GameManager::get()->fadeInMusic("jam-market.mp3"_spr);
+
     CCSpriteFrameCache::get()->addSpriteFramesWithFile("GJ_ShopSheet01.plist");
 
     auto winSize = CCDirector::get()->getWinSize();
@@ -84,14 +88,107 @@ bool JamMarketLayer::init() {
 
     addChild(menu);
 
-    auto spr = CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png");
+    auto backBtn = CCMenuItemSpriteExtra::create(
+        CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png"),
+        this,
+        menu_selector(JamMarketLayer::onBack)
+    );
+    backBtn->setPosition({24, winSize.height - 23});
 
-    auto btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(JamMarketLayer::onBack));
-    btn->setPosition({24, winSize.height - 23});
+    menu->addChild(backBtn);
 
-    menu->addChild(btn);
+    auto timer = CCLabelBMFont::create("Re-stock in 3h 55min", "bigFont.fnt");
+    timer->setScale(0.4f);
+    timer->setColor({154, 94, 65});
+    timer->setOpacity(173);
+    timer->setAnchorPoint({0.f, 0.5f});
+    timer->setPosition({winSize.width / 2.f - 198.5f, 183.5f});
 
-    GameManager::get()->fadeInMusic("jam-market.mp3"_spr);
+    addChild(timer);
 
+    for (int i = 1; i <= 3; ++i) {
+        auto chestSpr = CCSprite::createWithSpriteFrameName(fmt::format("chest_0{}_02_001.png", i).c_str());
+        chestSpr->setScale(57.6f / chestSpr->getContentWidth());
+
+        auto chestBtn = CCMenuItemSpriteExtra::create(chestSpr, this, nullptr);
+        chestBtn->setPosition({winSize.width / 2.f + (i - 2) * 113.5f, 62});
+
+        menu->addChild(chestBtn);
+
+        auto lbl = CCLabelBMFont::create("2,000", "bigFont.fnt");
+        lbl->setScale(0.35f);
+        lbl->setAnchorPoint({0.f, 0.5f});
+
+        auto jamIcon = CCSprite::create("jam1.png"_spr);
+        jamIcon->setScale(0.175f);
+        jamIcon->setAnchorPoint({0.f, 0.5f});
+        jamIcon->setPositionX(lbl->getScaledContentWidth() + 2);
+
+        auto container = CCNode::create();
+        container->setPosition({chestBtn->getContentWidth() / 2.f - (lbl->getScaledContentWidth() + jamIcon->getScaledContentWidth() + 2) / 2.f, -8});
+        container->addChild(lbl);
+        container->addChild(jamIcon);
+
+        chestBtn->addChild(container);
+    }
+
+    menu = CCMenu::create();
+    menu->setPositionY(0);
+
+    addChild(menu);
+
+    auto gsm = GameStatsManager::get();
+    auto unlockableItems = std::vector<GJStoreItem*>{};
+
+    for (const auto& [key, item] : CCDictionaryExt<int, GJStoreItem*>(gsm->m_storeItems)) {
+        if (
+            item->m_shopType != ShopType::Paths
+            && item->m_unlockType != 0xC
+            && item->m_unlockType > 0
+            && !gsm->isStoreItemUnlocked(key)
+        ) {
+            unlockableItems.push_back(item);
+        }
+    }
+    
+    auto chosenItems = std::vector<GJStoreItem*>{};
+
+    for (int i = 0; i < 4 && !unlockableItems.empty(); ++i) {
+        int randomIndex = Utils::getRandomInt(0, unlockableItems.size() - 1);
+        chosenItems.push_back(unlockableItems[randomIndex]);
+        unlockableItems.erase(unlockableItems.begin() + randomIndex);
+    }
+
+    for (int i = 0; i < chosenItems.size(); i++) {
+        auto item = chosenItems[i];
+        auto icon = GJItemIcon::createStoreItem(
+            static_cast<UnlockType>(item->m_unlockType.value()),
+            item->m_typeID.value(),
+            false,
+            GameManager::get()->colorForIdx(item->m_typeID.value())
+        );
+
+        auto btn = CCMenuItemSpriteExtra::create(icon, this, nullptr);
+        btn->setPosition({-127.5f + 85.f * i, 130.5f});
+
+        menu->addChild(btn);
+        
+        auto lbl = CCLabelBMFont::create("2,000", "bigFont.fnt");
+        lbl->setScale(0.35f);
+        lbl->setAnchorPoint({0.f, 0.5f});
+
+        auto jamIcon = CCSprite::create("jam1.png"_spr);
+        jamIcon->setScale(0.175f);
+        jamIcon->setAnchorPoint({0.f, 0.5f});
+        jamIcon->setPositionX(lbl->getScaledContentWidth() + 2);
+
+        auto container = CCNode::create();
+        container->setPosition({btn->getContentWidth() / 2.f - (lbl->getScaledContentWidth() + jamIcon->getScaledContentWidth() + 2) / 2.f, -8});
+        container->addChild(lbl);
+        container->addChild(jamIcon);
+
+        btn->addChild(container);
+    }
+    
     return true;
 }
