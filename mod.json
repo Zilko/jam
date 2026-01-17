@@ -13,7 +13,6 @@
 	"description": "",
 	"early-load": true,
 	"dependencies": {
-    	"cvolton.level-id-api": ">=v1.2.3",
     	"geode.node-ids": ">=v1.21.1",
 	  	"capeling.garage-stats-menu": ">=v1.0.1"
 	},

@@ -86,29 +86,15 @@ void JamMarketLayer::tooExpensive(CCObject* sender) {
         nullptr
     ));
 
-    m_jamLabel->runAction(CCSequence::create(
-        CCMoveBy::create(0.04f, ccp(-2, 0)),
-        CCMoveBy::create(0.04f, ccp(4, 0)),
-        CCMoveBy::create(0.04f, ccp(-4, 0)),
-        CCMoveBy::create(0.04f, ccp(2, 0)),
-        nullptr
-    ));
-
-    m_jamIcon->runAction(CCSequence::create(
-        CCMoveBy::create(0.04f, ccp(-2, 0)),
-        CCMoveBy::create(0.04f, ccp(4, 0)),
-        CCMoveBy::create(0.04f, ccp(-4, 0)),
-        CCMoveBy::create(0.04f, ccp(2, 0)),
-        nullptr
-    ));
-
-    m_jamParticle->runAction(CCSequence::create(
-        CCMoveBy::create(0.04f, ccp(-2, 0)),
-        CCMoveBy::create(0.04f, ccp(4, 0)),
-        CCMoveBy::create(0.04f, ccp(-4, 0)),
-        CCMoveBy::create(0.04f, ccp(2, 0)),
-        nullptr
-    ));
+    for (auto node : std::array<CCNode*, 3>{ m_jamLabel, m_jamIcon, m_jamParticle }) {
+        node->runAction(CCSequence::create(
+            CCMoveBy::create(0.04f, ccp(-2, 0)),
+            CCMoveBy::create(0.04f, ccp(4, 0)),
+            CCMoveBy::create(0.04f, ccp(-4, 0)),
+            CCMoveBy::create(0.04f, ccp(2, 0)),
+            nullptr
+        ));  
+    }
 }
 
 void JamMarketLayer::onPurchase(CCObject* sender) {
