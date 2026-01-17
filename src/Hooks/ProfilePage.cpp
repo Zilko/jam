@@ -4,6 +4,10 @@
 
 void ProProfilePage::loadPageFromUserInfo(GJUserScore* p0) {
     ProfilePage::loadPageFromUserInfo(p0);
+
+    if (!m_ownProfile) {
+        return;
+    }
     
     auto menu = m_mainLayer->getChildByID("stats-menu");
 

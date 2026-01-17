@@ -10,8 +10,14 @@
 	"name": "Jam",
 	"version": "v1.0.0",
 	"developer": "Zilko",
-	"description": "",
+	"description": "add a new jam stat to your game",
 	"early-load": true,
+	"links": {
+		"source": "https://github.com/Zilko/jam"
+	},
+	"tags": [
+		"universal", "gameplay", "offline", "enhancement", "music", "interface", "utility", "content"
+	],
 	"dependencies": {
     	"geode.node-ids": ">=v1.21.1",
 	  	"capeling.garage-stats-menu": ">=v1.0.1"
