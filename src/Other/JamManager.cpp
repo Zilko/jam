@@ -137,19 +137,8 @@ int JamManager::getTimeSinceLastRestock() {
 void JamManager::restockJamMarket() {
     auto gsm = GameStatsManager::get();
     auto unlockableItems = std::vector<GJStoreItem*>{};
-    auto totald1 = 0.f;
-    auto totald2 = 0;
-    auto totalo1 = 0.f;
-    auto totalo2 = 0;
 
     for (const auto& [key, item] : CCDictionaryExt<int, GJStoreItem*>(gsm->m_storeItems)) {
-        if (item->m_shopType == ShopType::Diamond) {
-            totald1 += item->m_price.value();
-            totald2++;
-        } else {
-            totalo1 += item->m_price.value();
-            totalo2++;
-        }
         if (
             item->m_shopType != ShopType::Paths
             && item->m_unlockType != 0xC
@@ -166,7 +155,15 @@ void JamManager::restockJamMarket() {
         GJStoreItem* item = nullptr;
 
         do {
-            item = static_cast<GJStoreItem*>(gsm->m_storeItems->randomObject());
+            auto index = Utils::getRandomInt(0, gsm->m_storeItems->count() - 1);
+            auto i = 0;
+
+            for (const auto& [key, _item] : CCDictionaryExt<int, GJStoreItem*>(gsm->m_storeItems)) {
+                if (i++ == index) {
+                    item = _item;
+                    break;
+                }
+            }
         } while (chosenFakeItems.contains(item));
 
         chosenFakeItems.insert(item);
