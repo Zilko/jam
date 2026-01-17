@@ -2,6 +2,26 @@
 
 #include "../Other/JamManager.hpp"
 
+ProPlayLayer::Fields::~Fields() {
+    JamManager::get().m_currencyLayerShouldRewardJam = false;
+}
+
+void ProPlayLayer::playJamSound() {
+    auto fmod = FMODAudioEngine::get();
+
+    fmod->playEffectAdvanced("lid.mp3"_spr, 0.6f, 1.f, 0.45f, 1.f, false, false, 50, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
+    fmod->playEffect("magicExplosion.ogg", 1.35f, 1.f, 0.05f);
+
+    runAction(CCSequence::create(
+        CCDelayTime::create(0.01f),
+        CallFuncExt::create([fmod] {
+            fmod->playEffect("pop.mp3"_spr, 0.49f, 1.f, 0.3f);
+            fmod->playEffect("magicExplosion.ogg", 1.35f, 1.f, 0.1f);
+        }),
+        nullptr
+    ));
+}
+
 CCPoint ProPlayLayer::getPlayerScreenPos() {
     CCPoint pos = m_player1->convertToWorldSpaceAR({0, 0});
     CCPoint cameraCenter = m_cameraObb2->m_center;
@@ -53,6 +73,16 @@ void ProPlayLayer::addRewardLayer() {
 void ProPlayLayer::modifyJamReward(int jam) {
     auto& jm = JamManager::get();
     auto layer = getChildByType<CurrencyRewardLayer>(0);
+
+    if (!layer) {
+        auto f = m_fields.self();
+        
+        f->m_isDelayedNewBest = true;
+        f->m_jamDelayedReward = jam;
+
+        return;
+    }
+
     auto children = getChildrenExt<CCNode*>();
 
     CCNode* newBestContainer = nullptr;
@@ -86,6 +116,8 @@ void ProPlayLayer::modifyJamReward(int jam) {
     if (!referenceLabel) {
         return;
     }
+    
+    playJamSound();
 
     auto yPos = referenceLabel->getPositionY();
 
@@ -167,9 +199,23 @@ void ProPlayLayer::addJamReward(int jam) {
 }
 
 void ProPlayLayer::showNewBest(bool newReward, int orbs, int diamonds, bool demonKey, bool noRetry, bool noTitle) {
-    m_fields->m_didShowNewBest = true;
+    auto& jm = JamManager::get();
+    auto f = m_fields.self();
+    
+    if (f->m_isDelayedNewBest) {
+        f->m_isDelayedNewBest = false;
+
+        jm.m_currencyLayerShouldRewardJam = true;
+        jm.m_currencyLayerJamAmount = f->m_jamDelayedReward;
+
+        playJamSound();
+    } else {
+        f->m_didShowNewBest = true;
+    }
 
     PlayLayer::showNewBest(newReward, orbs, diamonds, demonKey, noRetry, noTitle);
+
+    jm.m_currencyLayerShouldRewardJam = false;
 }
 
 void ProPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
@@ -228,22 +274,10 @@ void ProPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
         seq->setTag(16);
         
         runAction(seq);
+        playJamSound();
 	}
 
-    FMODAudioEngine::get()->playEffectAdvanced("lid.mp3"_spr, 0.6f, 1.f, 0.45f, 1.f, false, false, 50, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
-	FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.35f, 1.f, 0.05f);
-
-    runAction(CCSequence::create(
-        CCDelayTime::create(0.01f),
-        CallFuncExt::create([] {
-            FMODAudioEngine::get()->playEffect("pop.mp3"_spr, 0.49f, 1.f, 0.3f);
-            FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.35f, 1.f, 0.1f);
-        }),
-        nullptr
-    ));
-
     f->m_didShowNewBest = false;
-
     jm.m_currencyLayerShouldRewardJam = false;
 }
 

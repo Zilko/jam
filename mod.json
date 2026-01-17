@@ -8,7 +8,7 @@
 	},
 	"id": "zilko.jam",
 	"name": "Jam",
-	"version": "v1.0.0",
+	"version": "v1.0.1",
 	"developer": "Zilko",
 	"description": "add a new jam stat to your game",
 	"early-load": true,

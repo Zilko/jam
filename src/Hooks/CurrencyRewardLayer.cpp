@@ -7,7 +7,7 @@ CurrencyRewardLayer* ProCurrencyRewardLayer::create(int orbs, int stars, int moo
     auto& jm = JamManager::get();
     auto isStars = false;
 
-    if (jm.m_currencyLayerShouldRewardJam) {
+    if (jm.m_currencyLayerShouldRewardJam && jm.m_currencyLayerJamAmount > 0) {
         if (stars > 0 && shardsCount <= 0) {
             shardsCount = jm.m_currencyLayerJamAmount;
             shardType = CurrencySpriteType::FireShard;
@@ -17,6 +17,8 @@ CurrencyRewardLayer* ProCurrencyRewardLayer::create(int orbs, int stars, int moo
         } else {
             jm.m_currencyLayerShouldRewardJam = false;
         }
+    } else {
+        jm.m_currencyLayerShouldRewardJam = false;
     }
 
     auto ret = CurrencyRewardLayer::create(orbs, stars, moons, diamonds, demonKey, keyCount, shardType, shardsCount, position, rewardType, yOffset, time);

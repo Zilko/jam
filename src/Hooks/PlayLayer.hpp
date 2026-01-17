@@ -6,7 +6,11 @@ class $modify(ProPlayLayer, PlayLayer) {
 
     struct Fields {
         bool m_didShowNewBest = false;
+        bool m_isDelayedNewBest = false;
         int m_jamReward = 0;
+        int m_jamDelayedReward = 0;
+
+        ~Fields();
     };
 	
 	static void onModify(auto& self) {
@@ -14,6 +18,8 @@ class $modify(ProPlayLayer, PlayLayer) {
     }
 
     CCPoint getPlayerScreenPos();
+
+    void playJamSound();
 
     void addRewardLayer();
     
