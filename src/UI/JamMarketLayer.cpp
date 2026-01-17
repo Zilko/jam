@@ -67,13 +67,69 @@ void JamMarketLayer::updateTimer(float) {
     );
 }
 
+void JamMarketLayer::tooExpensive(CCObject* sender) {
+    FMODAudioEngine::get()->playEffectAdvanced("pop.mp3"_spr, 1.f, 1.f, 0.35f, 1.f, true, false, 45, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
+        
+    runAction(CCSequence::create(
+        CCDelayTime::create(0.11f),
+        CallFuncExt::create([] {
+            FMODAudioEngine::get()->playEffectAdvanced("pop.mp3"_spr, 0.6f, 1.f, 0.35f, 1.f, true, false, 45, 1000, 0, 0, false, 0, false, false, 0, 0, 0.f, 0);
+        }),
+        nullptr
+    ));
+
+    static_cast<CCNode*>(sender)->runAction(CCSequence::create(
+        CCMoveBy::create(0.04f, ccp(-1.5f, 0)),
+        CCMoveBy::create(0.04f, ccp(3, 0)),
+        CCMoveBy::create(0.04f, ccp(-3, 0)),
+        CCMoveBy::create(0.04f, ccp(1.5f, 0)),
+        nullptr
+    ));
+
+    m_jamLabel->runAction(CCSequence::create(
+        CCMoveBy::create(0.04f, ccp(-2, 0)),
+        CCMoveBy::create(0.04f, ccp(4, 0)),
+        CCMoveBy::create(0.04f, ccp(-4, 0)),
+        CCMoveBy::create(0.04f, ccp(2, 0)),
+        nullptr
+    ));
+
+    m_jamIcon->runAction(CCSequence::create(
+        CCMoveBy::create(0.04f, ccp(-2, 0)),
+        CCMoveBy::create(0.04f, ccp(4, 0)),
+        CCMoveBy::create(0.04f, ccp(-4, 0)),
+        CCMoveBy::create(0.04f, ccp(2, 0)),
+        nullptr
+    ));
+
+    m_jamParticle->runAction(CCSequence::create(
+        CCMoveBy::create(0.04f, ccp(-2, 0)),
+        CCMoveBy::create(0.04f, ccp(4, 0)),
+        CCMoveBy::create(0.04f, ccp(-4, 0)),
+        CCMoveBy::create(0.04f, ccp(2, 0)),
+        nullptr
+    ));
+}
+
 void JamMarketLayer::onPurchase(CCObject* sender) {
+    auto& jm = JamManager::get();
     auto item = m_shopItems[static_cast<CCNode*>(sender)->getTag()];
+
+    if (jm.getItemJamPrice(item) > jm.getJam()) {
+        return tooExpensive(sender);
+    }
+
     JamPurchaseItemPopup::create(item, this)->show();
 }
 
 void JamMarketLayer::onPurchaseChest(CCObject* sender) {
+    auto& jm = JamManager::get();
     auto chest = static_cast<CCNode*>(sender)->getTag();
+
+    if (jm.getChestJamPrice(chest) > jm.getJam()) {
+        return tooExpensive(sender);
+    }
+
     JamPurchaseItemPopup::create(chest, this)->show();
 }
 
@@ -164,7 +220,9 @@ void JamMarketLayer::updateChests() {
             continue;
         }
 
-        auto lbl = CCLabelBMFont::create(GameToolbox::pointsToString(jm.getChestJamPrice(i)).c_str(), "bigFont.fnt");
+        auto price = jm.getChestJamPrice(i);
+
+        auto lbl = CCLabelBMFont::create(GameToolbox::pointsToString(price).c_str(), "bigFont.fnt");
         lbl->setScale(0.35f);
         lbl->setAnchorPoint({0.f, 0.5f});
 
@@ -226,7 +284,7 @@ bool JamMarketLayer::init() {
 
     addChild(m_mainMenu);
 
-    auto wantedPoster = CCSprite::create("wanted-poster"_spr);
+    auto wantedPoster = CCSprite::create("JamMaster.png"_spr);
     wantedPoster->setPosition({
         winSize.width / 2.f + 110.5f,
         winSize.height - (winSize.height - (desk->getPositionY() + desk->getContentHeight() / 2.f)) / 2.f - 5.f
@@ -244,17 +302,17 @@ bool JamMarketLayer::init() {
 
     addChild(m_jamLabel);
 
-    auto jamIcon = CCSprite::create("jam1.png"_spr);
-    jamIcon->setScale(0.25f);
-    jamIcon->setPosition(winSize - ccp(22, 15));
+    m_jamIcon = CCSprite::create("jam1.png"_spr);
+    m_jamIcon->setScale(0.25f);
+    m_jamIcon->setPosition(winSize - ccp(22, 15));
 
-    addChild(jamIcon);
+    addChild(m_jamIcon);
 
-    auto particle = GameToolbox::particleFromString("8a-1a1a0.2a30a0a360a0a10a12a10a0a0a0a0a0a0a2a1a0a0a0.960784a0a0.258824a0a0.258824a0a1a0a1a1a0a0a1a0a0.670588a0a0.670588a0a1a0a0a0a0a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0", nullptr, false);
-    particle->setScale(0.625f);
-    particle->setPosition(jamIcon->getPosition());
+    m_jamParticle = GameToolbox::particleFromString("8a-1a1a0.2a30a0a360a0a10a12a10a0a0a0a0a0a0a2a1a0a0a0.960784a0a0.258824a0a0.258824a0a1a0a1a1a0a0a1a0a0.670588a0a0.670588a0a1a0a0a0a0a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0", nullptr, false);
+    m_jamParticle->setScale(0.625f);
+    m_jamParticle->setPosition(m_jamIcon->getPosition());
 
-    addChild(particle);
+    addChild(m_jamParticle);
 
     auto backBtn = CCMenuItemSpriteExtra::create(
         CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png"),

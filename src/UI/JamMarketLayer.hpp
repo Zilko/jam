@@ -4,6 +4,10 @@ class JamMarketLayer : public CCLayer {
 
 private:
 
+    CCParticleSystemQuad* m_jamParticle = nullptr;
+
+    CCSprite* m_jamIcon = nullptr;
+
     CCLabelBMFont* m_restockLabel = nullptr;
     CCLabelBMFont* m_jamLabel = nullptr;
 
@@ -23,6 +27,8 @@ private:
     void updateJamCount();
 
     void updateTimer(float);
+
+    void tooExpensive(CCObject*);
 
     void onPurchase(CCObject*);
 
