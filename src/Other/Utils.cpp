@@ -3,15 +3,6 @@
 
 #include <random>
 
-void Utils::setHookEnabled(const std::string& name, bool enabled) {
-    for (Hook* hook : Mod::get()->getHooks()) {
-        if (hook->getDisplayName() == name) {
-            (void)(enabled ? hook->enable() : hook->disable());
-            break;
-        }
-    }
-}
-
 int Utils::getRandomInt(int min, int max) {
     static std::mt19937 gen(std::random_device{}());
 
@@ -116,4 +107,36 @@ CCLabelBMFont* Utils::createJamProgressLabel(GJGameLevel* level, bool abbreviate
     }
 
     return ret;
+}
+
+std::string Utils::getTimeLeftString(int time) {
+    if (time < 60) {
+        return std::to_string(time) + "s";
+    }
+
+    int minutes = time / 60;
+    int seconds = time % 60;
+
+    if (minutes < 60) {
+        if (seconds == 0) {
+            return std::to_string(minutes) + "m";
+        }
+
+        return std::to_string(minutes) + "m " + std::to_string(seconds) + "s";
+    }
+
+    int hours = minutes / 60;
+    minutes %= 60;
+
+    std::string result = std::to_string(hours) + "h";
+
+    if (minutes > 0) {
+        result += " " + std::to_string(minutes) + "m";
+    }
+
+    if (seconds > 0) {
+        result += " " + std::to_string(seconds) + "s";
+    }
+
+    return result;
 }

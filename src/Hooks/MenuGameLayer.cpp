@@ -7,6 +7,14 @@ void ProMenuGameLayer::Fields::currencyWillExit(CurrencyRewardLayer*) {
     m_rewardLayer = nullptr;
 }
 
+bool ProMenuGameLayer::init() {
+    if (!Mod::get()->hasSavedValue("next-restock")) {
+        JamManager::get().restockJamMarket();
+    }
+    
+    return MenuGameLayer::init();
+}
+
 void ProMenuGameLayer::destroyPlayer() {
     if (!m_playerObject) {
         return MenuGameLayer::destroyPlayer();

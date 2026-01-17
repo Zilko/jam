@@ -6,8 +6,6 @@ class Utils {
 
 public:
 
-    static void setHookEnabled(const std::string&, bool);
-
     static int getRandomInt(int, int);
 
     static void modifyRewardLayer(CurrencyRewardLayer*, CurrencySpriteType);
@@ -16,5 +14,6 @@ public:
 
     static CCLabelBMFont* createJamProgressLabel(GJGameLevel*, bool = false);
     
+    static std::string getTimeLeftString(int);
 
 };

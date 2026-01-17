@@ -18,6 +18,8 @@ public:
 
     int getJam();
 
+    void grabJam(int);
+    
     void rewardJam(int);
 
     bool canLevelHaveJam(GJGameLevel*);
@@ -31,5 +33,35 @@ public:
     int getLevelJamForProgress(GJGameLevel*, float);
 
     int getJamChestReward(int);
+
+    int getTimeForRestock();
+
+    int getTimeSinceLastRestock();
+
+    void restockJamMarket();
+
+    const std::array<GJStoreItem*, 4> getJamMarketItems();
+
+    const std::array<GJStoreItem*, 4> getFakeJamMarketItems();
+
+    int getItemJamPrice(GJStoreItem*);
+
+    int getChestJamPrice(int);
+
+    void unlockItem(UnlockType, int, int);
+
+    void unlockItem(GJStoreItem*);
+
+    void purchaseItem(GJStoreItem*);
+
+    void purchaseChest(int);
+
+    bool didUnlockItemWithJam(GJStoreItem*);
+
+    bool didUnlockItemWithJam(UnlockType, int);
+
+    bool didUnlockItemWithJam(int);
+
+    bool isChestPurchased(int);
 
 };

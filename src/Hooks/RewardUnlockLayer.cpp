@@ -14,7 +14,7 @@ void ProRewardUnlockLayer::step3() {
     ) {
         return RewardUnlockLayer::step3();
     }
-log::debug("{}", m_chestType);
+    
     jm.m_nextRewardUnlockLayerCanRewardJam = false;
 
     if (m_rewardItem->m_rewardObjects->count() == 1) {

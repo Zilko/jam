@@ -5,12 +5,12 @@
 class $modify(ProMenuGameLayer, MenuGameLayer) {
 
     struct Fields : CurrencyRewardDelegate {
-
         CurrencyRewardLayer* m_rewardLayer = nullptr;
 
         void currencyWillExit(CurrencyRewardLayer*) override;
-
     };
+
+    bool init();
 
     void destroyPlayer();
 
