@@ -2,9 +2,15 @@
 
 #include "../Other/JamManager.hpp"
 
-void ProRewardUnlockLayer::step3() {
-    auto& jm = JamManager::get();
+ProRewardUnlockLayer::Fields::~Fields() {
+    JamManager::get().m_currencyLayerShouldRewardJam = false;
+}
+
+void ProRewardUnlockLayer::step2() {
+    RewardUnlockLayer::step2();
     
+    auto& jm = JamManager::get();
+
     if (
         !jm.m_nextRewardUnlockLayerCanRewardJam
         || !m_rewardItem
@@ -12,7 +18,7 @@ void ProRewardUnlockLayer::step3() {
         || m_rewardItem->m_rewardObjects->count() <= 0
         || m_rewardItem->m_rewardObjects->count() >= 7
     ) {
-        return RewardUnlockLayer::step3();
+        return;
     }
     
     jm.m_nextRewardUnlockLayerCanRewardJam = false;
@@ -22,13 +28,14 @@ void ProRewardUnlockLayer::step3() {
         auto unlockType = static_cast<int>(object->m_unlockType);
 
         if (unlockType > 0 && unlockType <= 15) {
-            return RewardUnlockLayer::step3();
+            return;
         }
     }
+
     auto jam = jm.getJamChestReward(m_chestType);
 
     if (jam <= 0) {
-        return RewardUnlockLayer::step3();
+        return;
     }
 
     jm.rewardJam(jam);
@@ -36,7 +43,17 @@ void ProRewardUnlockLayer::step3() {
     jm.m_currencyLayerShouldRewardJam = true;
     jm.m_currencyLayerJamAmount = jam;
 
-    RewardUnlockLayer::step3();
+    m_fields.self();
+
+    runAction(CCSequence::create(
+        CCDelayTime::create(0.3001f),
+        CCCallFunc::create(this, callfunc_selector(ProRewardUnlockLayer::realStep3)),
+        nullptr
+    ));
+}
+
+void ProRewardUnlockLayer::realStep3() {
+    auto& jm = JamManager::get();
 
     jm.m_currencyLayerShouldRewardJam = false;
 
@@ -50,7 +67,7 @@ void ProRewardUnlockLayer::step3() {
         containers[i - 1] = m_mainLayer->getChildByIndex(-i);
     }
 
-    auto lbl = CCLabelBMFont::create(fmt::format("+{}", jam).c_str(), "bigFont.fnt");
+    auto lbl = CCLabelBMFont::create(fmt::format("+{}", jm.m_currencyLayerJamAmount).c_str(), "bigFont.fnt");
 	lbl->setAnchorPoint({1.f, 0.5f});
 	lbl->limitLabelWidth(40.f, 0.625f, 0.0001f);
     lbl->runAction(CCSequence::create(

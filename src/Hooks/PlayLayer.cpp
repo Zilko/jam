@@ -87,7 +87,7 @@ void ProPlayLayer::modifyJamReward(int jam) {
 
     CCNode* newBestContainer = nullptr;
 
-    for (auto i = children.size() - 1; i >= 0; i--) {
+    for (int i = children.size() - 1; i >= 0; i--) {
         auto child = children[i];
 
         if (

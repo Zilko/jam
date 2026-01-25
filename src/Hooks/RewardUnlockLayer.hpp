@@ -4,6 +4,12 @@
 
 class $modify(ProRewardUnlockLayer, RewardUnlockLayer) {
 
-    void step3();
+    struct Fields {
+        ~Fields();
+    };
+
+    void realStep3();
+
+    void step2();
 
 };
