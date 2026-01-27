@@ -101,24 +101,27 @@ void ProRewardUnlockLayer::realStep3() {
     
 	m_mainLayer->addChild(jamContainer, 10);
 
+    auto center = CCDirector::get()->getWinSize() / 2.f;
+
+    // lol
     if (containers[0] && containers[1] && containers[2] && containers[3] && containers[4] && containers[5]) {
-        jamContainer->setPosition({174, 100});
+        jamContainer->setPosition(ccp(174, 100) - ccp(283.5f, 160) + center);
     } else if (containers[0] && containers[1] && containers[2] && containers[3] && containers[4]) {
-        containers[0]->setPosition({174, 153});
-        jamContainer->setPosition({393, 153});
+        containers[0]->setPosition(ccp(174, 153) - ccp(283.5f, 160) + center);
+        jamContainer->setPosition(ccp(393, 153) - ccp(283.5f, 160) + center);
     } else if (containers[0] && containers[1] && containers[2] && containers[3]) {
-        jamContainer->setPosition({393, 153});
+        jamContainer->setPosition(ccp(393, 153) - ccp(283.5f, 160) + center);
     } else if (containers[0] && containers[1] && containers[2]) {
-        containers[2]->setPosition({174, 208});
-        containers[1]->setPosition({247, 238});
-        containers[0]->setPosition({320, 238});
-        jamContainer->setPosition({393, 208});
+        containers[2]->setPosition(ccp(174, 208) - ccp(283.5f, 160) + center);
+        containers[1]->setPosition(ccp(247, 238) - ccp(283.5f, 160) + center);
+        containers[0]->setPosition(ccp(320, 238) - ccp(283.5f, 160) + center);
+        jamContainer->setPosition(ccp(393, 208) - ccp(283.5f, 160) + center);
     } else if (containers[0] && containers[1]) {
-        containers[1]->setPosition({208.5f, 218});
-        containers[0]->setPosition({283.5f, 238});
-        jamContainer->setPosition({358.5f, 218});
+        containers[1]->setPosition(ccp(208.5f, 218) - ccp(283.5f, 160) + center);
+        containers[0]->setPosition(ccp(283.5f, 238) - ccp(283.5f, 160) + center);
+        jamContainer->setPosition(ccp(358.5f, 218) - ccp(283.5f, 160) + center);
     } else if (containers[0]) {
-        containers[0]->setPosition({238.5f, 228});
-        jamContainer->setPosition({328.5f, 228});
+        containers[0]->setPosition(ccp(238.5f, 228) - ccp(283.5f, 160) + center);
+        jamContainer->setPosition(ccp(328.5f, 228) - ccp(283.5f, 160) + center);
     }
 }
