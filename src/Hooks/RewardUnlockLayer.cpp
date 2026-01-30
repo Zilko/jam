@@ -1,26 +1,36 @@
 #include "RewardUnlockLayer.hpp"
 
 #include "../Other/JamManager.hpp"
+#include "../Other/Utils.hpp"
 
 ProRewardUnlockLayer::Fields::~Fields() {
     JamManager::get().m_currencyLayerShouldRewardJam = false;
 }
 
-void ProRewardUnlockLayer::step2() {
-    RewardUnlockLayer::step2();
+bool ProRewardUnlockLayer::init(int p0, RewardsPage* p1) {
+    if (!RewardUnlockLayer::init(p0, p1)) {
+        return false;
+    }
     
+    if (JamManager::get().m_nextRewardUnlockLayerCanRewardJam) {
+        schedule(schedule_selector(ProRewardUnlockLayer::updateLookout), 0.f);
+    }
+
+    return true;
+}
+
+void ProRewardUnlockLayer::calculateJam() {
+
     auto& jm = JamManager::get();
 
     if (
-        !jm.m_nextRewardUnlockLayerCanRewardJam
-        || !m_rewardItem
-        || !m_rewardItem->m_rewardObjects
+        !m_rewardItem->m_rewardObjects
         || m_rewardItem->m_rewardObjects->count() <= 0
         || m_rewardItem->m_rewardObjects->count() >= 7
     ) {
         return;
     }
-    
+
     jm.m_nextRewardUnlockLayerCanRewardJam = false;
 
     if (m_rewardItem->m_rewardObjects->count() == 1) {
@@ -42,14 +52,49 @@ void ProRewardUnlockLayer::step2() {
 
     jm.m_currencyLayerShouldRewardJam = true;
     jm.m_currencyLayerJamAmount = jam;
+}
 
-    m_fields.self();
+void ProRewardUnlockLayer::updateLookout(float) {
+    if (!m_rewardItem) {
+        return;
+    }
 
-    runAction(CCSequence::create(
-        CCDelayTime::create(0.3001f),
-        CCCallFunc::create(this, callfunc_selector(ProRewardUnlockLayer::realStep3)),
-        nullptr
-    ));
+    auto& jm = JamManager::get();
+    auto f = m_fields.self();
+    auto currencyLayer = getChildByType<CurrencyRewardLayer>(0);
+
+    if (!f->m_foundRewardItem) {
+        calculateJam();
+
+        if (!jm.m_currencyLayerShouldRewardJam || jm.m_currencyLayerJamAmount <= 0) {
+            f->m_doLookout = false;
+            unschedule(schedule_selector(ProRewardUnlockLayer::updateLookout));
+            return;
+        }
+
+        f->m_foundRewardItem = true;
+        f->m_doLookout = true;
+
+        if (currencyLayer) {
+            currencyLayer->createObjectsFull(
+                CurrencySpriteType::Star, 
+                jm.m_currencyLayerJamAmount,
+                nullptr,
+                CCDirector::get()->getWinSize() / 2.f + ccp(0, 9),
+                0.f
+            );
+
+            Utils::modifyRewardLayer(currencyLayer, CurrencySpriteType::Star);
+
+            return;
+        }
+    }
+
+    if (f->m_doLookout && currencyLayer) {
+        f->m_doLookout = false;
+        unschedule(schedule_selector(ProRewardUnlockLayer::updateLookout));
+        realStep3();
+    }
 }
 
 void ProRewardUnlockLayer::realStep3() {
@@ -91,8 +136,8 @@ void ProRewardUnlockLayer::realStep3() {
 	jamContainer->addChild(lbl);
 	jamContainer->addChild(icon);
     jamContainer->setScale(3.f);
+    jamContainer->setVisible(false);
 	jamContainer->runAction(CCSequence::create(
-		CCHide::create(),
 		CCDelayTime::create(delay),
 		CCShow::create(),
 		CCEaseBounceOut::create(CCScaleTo::create(0.3f, 1.f)),

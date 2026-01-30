@@ -127,7 +127,7 @@ void ProEndLevelLayer::showLayer(bool p0) {
 	};
 
 	if (!starContainer && !orbContainer && !diamondContainer) {
-		f->m_jamContainer->setPosition({403.5f, 178.f});
+		f->m_jamContainer->setPosition(CCDirector::get()->getWinSize() / 2.f + ccp(120, 18));
 		
 		runContainerAction(f->m_jamContainer, lbl, icon, delay, 1.f);
 

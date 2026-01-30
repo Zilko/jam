@@ -109,10 +109,10 @@ int JamManager::getJamChestReward(int chestType) {
         case 2:
         case 3: return Utils::getRandomInt(1, 6) * 5 + 15;
         case 4: return Utils::getRandomInt(1, 15) * 5 + 45;
-        case 5: return Utils::getRandomInt(1, 15) * 5 + 120;
-        case 6: return Utils::getRandomInt(1, 15) * 5 + 195;
-        case 7: return Utils::getRandomInt(1, 5) * 5 + 270;
-        case 8: return Utils::getRandomInt(1, 5) * 15 + 295;
+        case 5: return Utils::getRandomInt(1, 15) * 5 + 220;
+        case 6: return Utils::getRandomInt(1, 15) * 5 + 395;
+        case 7: return Utils::getRandomInt(1, 5) * 5 + 870;
+        case 8: return Utils::getRandomInt(1, 5) * 15 + 1095;
         default: return 0;
     }
 }
