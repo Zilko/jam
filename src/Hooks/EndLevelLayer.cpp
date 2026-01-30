@@ -78,6 +78,10 @@ void ProEndLevelLayer::showLayer(bool p0) {
 	auto starContainer = m_mainLayer->getChildByID("star-container");
 	auto orbContainer = m_mainLayer->getChildByID("orb-container");
 	auto diamondContainer = m_mainLayer->getChildByID("diamond-container");
+
+	if (!starContainer) {
+		starContainer = m_mainLayer->getChildByID("moon-container");
+	}
 		
 	auto lbl = CCLabelBMFont::create(fmt::format("+{}", f->m_jamReward).c_str(), "bigFont.fnt");
 	lbl->setScale(0.625f);
