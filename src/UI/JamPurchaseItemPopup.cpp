@@ -3,22 +3,21 @@
 
 #include "../Other/JamManager.hpp"
 
-JamPurchaseItemPopup* JamPurchaseItemPopup::create(GJStoreItem* item, JamMarketLayer* layer) {
-    auto ret = new JamPurchaseItemPopup(item, layer);
+JamPurchaseItemPopup* JamPurchaseItemPopup::create(GJStoreItem* item, int chest, JamMarketLayer* layer) {
+    auto ret = new JamPurchaseItemPopup(item, chest, layer);
 
-    ret->initAnchored(260, 190, "GJ_square02.png");
+    ret->init();
     ret->autorelease();
 
     return ret;
 }
 
-JamPurchaseItemPopup* JamPurchaseItemPopup::create(int chest, JamMarketLayer* layer) {
-    auto ret = new JamPurchaseItemPopup(chest, layer);
+JamPurchaseItemPopup* JamPurchaseItemPopup::createWithItem(GJStoreItem* item, JamMarketLayer* layer) {
+    return create(item, 0, layer);
+}
 
-    ret->initAnchored(260, 190, "GJ_square02.png");
-    ret->autorelease();
-
-    return ret;
+JamPurchaseItemPopup* JamPurchaseItemPopup::createWithChest(int chest, JamMarketLayer* layer) {
+    return create(nullptr, chest, layer);
 }
 
 void JamPurchaseItemPopup::onBuy(CCObject*) {
@@ -38,7 +37,9 @@ void JamPurchaseItemPopup::onBuy(CCObject*) {
     onClose(nullptr);
 }
 
-bool JamPurchaseItemPopup::setup() {
+bool JamPurchaseItemPopup::init() {
+    Popup::init(260, 190, "GJ_square02.png");
+
     auto& jm = JamManager::get();
 
     setTitle("Buy Item", "bigFont.fnt", 0.6f, 16.f);

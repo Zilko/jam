@@ -2,7 +2,7 @@
 
 class JamMarketLayer;
 
-class JamPurchaseItemPopup : public Popup<> {
+class JamPurchaseItemPopup : public Popup {
 
 private:
 
@@ -14,20 +14,17 @@ private:
 
     bool m_isChest = false;
 
-    JamPurchaseItemPopup(GJStoreItem* item, JamMarketLayer* layer)
-        : m_item(item), m_layer(layer) {}
-
-    JamPurchaseItemPopup(int chest, JamMarketLayer* layer)
-        : m_isChest(true), m_chest(chest), m_layer(layer) {}
+    JamPurchaseItemPopup(GJStoreItem* item, int chest, JamMarketLayer* layer)
+        : m_item(item), m_chest(chest), m_layer(layer), m_isChest(item == nullptr) {}
 
     void onBuy(CCObject*);
 
-    bool setup() override;
+    bool init() override;
 
 public:
 
-    static JamPurchaseItemPopup* create(GJStoreItem*, JamMarketLayer*);
-
-    static JamPurchaseItemPopup* create(int, JamMarketLayer*);
+    static JamPurchaseItemPopup* create(GJStoreItem*, int, JamMarketLayer*);
+    static JamPurchaseItemPopup* createWithItem(GJStoreItem*, JamMarketLayer*);
+    static JamPurchaseItemPopup* createWithChest(int, JamMarketLayer*);
 
 };

@@ -105,7 +105,7 @@ void JamMarketLayer::onPurchase(CCObject* sender) {
         return tooExpensive(sender);
     }
 
-    JamPurchaseItemPopup::create(item, this)->show();
+    JamPurchaseItemPopup::createWithItem(item, this)->show();
 }
 
 void JamMarketLayer::onPurchaseChest(CCObject* sender) {
@@ -116,7 +116,7 @@ void JamMarketLayer::onPurchaseChest(CCObject* sender) {
         return tooExpensive(sender);
     }
 
-    JamPurchaseItemPopup::create(chest, this)->show();
+    JamPurchaseItemPopup::createWithChest(chest, this)->show();
 }
 
 void JamMarketLayer::keyBackClicked() {
