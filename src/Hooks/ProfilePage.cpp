@@ -15,6 +15,10 @@ void ProProfilePage::loadPageFromUserInfo(GJUserScore* p0) {
         return;
     }
 
+    if (auto jamContainer = menu->getChildByID("jam-container"_spr)) {
+        jamContainer->removeFromParent();
+    }
+
     std::string str = GameToolbox::pointsToString(JamManager::get().getJam());
 
     auto lbl = CCLabelBMFont::create(str.c_str(), "bigFont.fnt");

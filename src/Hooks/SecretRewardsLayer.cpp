@@ -35,17 +35,22 @@ bool ProSecretRewardsLayer::init(bool p0) {
         return true;
     }
 
-
     auto spr = CCSprite::create("rope-1.png"_spr);
+    spr->setAnchorPoint({0, 0});
 
     for (int i = 0; i < 6; i++) {
         auto subSpr = CCSprite::create("rope-2.png"_spr);
-        subSpr->setPosition(ccp(22 - i, 76 + (subSpr->getContentHeight() - 1) * i));
+        subSpr->setPosition(ccp(22.3f, spr->getContentHeight() + (subSpr->getContentHeight() / 2.f) + subSpr->getContentHeight() * i));
 
         spr->addChild(subSpr);
     }
 
-    auto btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(ProSecretRewardsLayer::onJamMarket));
+    auto node = CCNode::create();
+    node->setContentSize({45, 116});
+
+    node->addChild(spr);
+
+    auto btn = CCMenuItemSpriteExtra::create(node, this, menu_selector(ProSecretRewardsLayer::onJamMarket));
     btn->setID("jam-market-button"_spr);
     btn->m_fSizeMult = 1.5f;
     btn->m_startPosition = btn->getNormalImage()->getPosition();
