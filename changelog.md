@@ -1,3 +1,9 @@
+# v1.0.4
+
+* Fixed crash when u had eveyr shop item bought
+* Fixed anpther crash
+* Fixed visual chest bug? lets find out
+
 # v1.0.3
 
 * Fixed bug

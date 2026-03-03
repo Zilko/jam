@@ -4,6 +4,10 @@
 #include <random>
 
 int Utils::getRandomInt(int min, int max) {
+    if (min > max) {
+        return min;
+    }
+
     static std::mt19937 gen(std::random_device{}());
 
     std::uniform_int_distribution<> dis(min, max);

@@ -189,7 +189,9 @@ void JamManager::restockJamMarket() {
     array = matjson::Value::array();
 
     for (auto item : chosenItems) {
-        array.push(item->m_index.value());
+        if (item) {
+            array.push(item->m_index.value());
+        }
     }
 
     Mod::get()->setSavedValue("store-items", array);
@@ -332,9 +334,14 @@ void JamManager::purchaseChest(int chest) {
 
         do {
             auto type = Utils::getRandomInt(1, 0xf);
+            auto count = gm->countForType(gm->unlockTypeToIconType(type));
+
+            if (count < 1) {
+                continue;
+            }
             
             pair = std::make_pair(
-                Utils::getRandomInt(1, gm->countForType(gm->unlockTypeToIconType(type))),
+                Utils::getRandomInt(1, count),
                 static_cast<UnlockType>(type)
             );
         } while (
@@ -366,9 +373,7 @@ void JamManager::purchaseChest(int chest) {
     layer->m_noElasticity = true;
     layer->show();
     layer->runAction(CCSequence::create(
-        CCDelayTime::create(1.1f),
-        CCCallFunc::create(layer, callfunc_selector(RewardUnlockLayer::step2)),
-        CCDelayTime::create(0.31f),
+        CCDelayTime::create(1.41f),
         CallFuncExt::create([layer, rewardItem] {
             layer->stopAllActions();
             layer->showCollectReward(rewardItem);
