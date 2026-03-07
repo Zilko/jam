@@ -139,7 +139,7 @@ void ProLevelCell::addDailyCell() {
 	
 	if (coinIcon2 && !coinIcon3) {
 		coinIcon1->setPositionX(coinIcon1->getPositionX() + 1.7f);
-		coinIcon2->setPositionX(coinIcon3->getPositionX() - 1.7f);
+		coinIcon2->setPositionX(coinIcon2->getPositionX() - 1.7f);
 	}
 	else if (coinIcon2 && coinIcon3) {
 		coinIcon1->setPositionX(coinIcon1->getPositionX() + 1.7f);
