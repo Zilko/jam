@@ -1,3 +1,8 @@
+# v1.0.8
+
+* fixed issue with showLayer instant
+* added a way for mods to set a delay of jam
+
 # v1.0.7
 
 * Fixed jam still giving jam when beating a level with safemode

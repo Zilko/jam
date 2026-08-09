@@ -1,6 +1,6 @@
 #include "EndLevelLayer.hpp"
 #include "PlayLayer.hpp"
-
+#include <cosmella.endscreen-rewards/include/EndscreenStat.hpp>
 #include "../Other/JamManager.hpp"
 
 void resetScaleAction(CCNode* node, float delay, float scale) {
@@ -64,8 +64,8 @@ void ProEndLevelLayer::addRewardLayer() {
 	jm.m_currencyLayerShouldRewardJam = false;
 }
 
-void ProEndLevelLayer::showLayer(bool p0) {
-	EndLevelLayer::showLayer(p0);
+void ProEndLevelLayer::showLayer(bool instant) {
+	EndLevelLayer::showLayer(instant);
 	
 	auto f = m_fields.self();
 
@@ -74,6 +74,34 @@ void ProEndLevelLayer::showLayer(bool p0) {
 	if (f->m_jamReward <= 0) {
 		return;
 	}
+
+	if (auto node = m_mainLayer->getChildByID(ESR_StatsContainerID)){
+		auto icon = CCSprite::create("jam1.png"_spr);
+		icon->setScale(0.375f);
+		f->m_jamContainer = ESR::EndscreenStat::create(
+            icon,
+            f->m_jamReward,
+            "jam-container"_spr,
+			nullptr,
+            [](EndLevelLayer* endLevelLayer, cocos2d::CCNode* StatNode, float AnimationDelay){
+               StatNode->runAction(CCSequence::create(
+					CCDelayTime::create(AnimationDelay >= 0.7f ? AnimationDelay - 0.7f : AnimationDelay),
+					CallFuncExt::create([] {
+						FMODAudioEngine::get()->playEffect("lid.mp3"_spr, 0.7f, 1.f, 0.4f);
+						FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.4f, 1.f, 0.24f);
+					}),
+					nullptr
+				));
+				StatNode->runAction(CCSequence::create(
+					CCDelayTime::create(AnimationDelay + 0.2f),
+					CCCallFunc::create(endLevelLayer, callfunc_selector(ProEndLevelLayer::addRewardLayer)),
+					nullptr
+				));
+            }
+        );
+		node->addChild(f->m_jamContainer, 1); 
+		return;
+	};
 	
 	auto starContainer = m_mainLayer->getChildByID("star-container");
 	auto orbContainer = m_mainLayer->getChildByID("orb-container");
@@ -100,14 +128,21 @@ void ProEndLevelLayer::showLayer(bool p0) {
 	f->m_jamContainer->addChild(icon);
 	
 	m_mainLayer->addChild(f->m_jamContainer, 10);
-	
-	auto delay = 0.f;
-	auto lidDelay = 0.f;
-	
-	if (m_coinsToAnimate && !GameManager::get()->getGameVariable("0168")) {
+	float delay = 0.f;
+	float lidDelay = 0.f;
+	if (m_coinsToAnimate && !(instant || GameManager::get()->getGameVariable("0168")) ) {
 		delay = m_coinsToAnimate->count() * 0.35f + 0.7f;
 		lidDelay = delay - 0.7f;
 	}
+
+	if (auto delayObject = typeinfo_cast<CCFloat*>(this->getUserObject("jam-reward-delay"_spr))){
+		delay += delayObject->getValue();
+		if (delay >= 0.7) {
+			lidDelay = delay - 0.7f;
+		} else {
+			lidDelay = 0.f;
+		};
+	};
 
 	runAction(CCSequence::create(
 		CCDelayTime::create(lidDelay),
