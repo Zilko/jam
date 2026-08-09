@@ -1,6 +1,6 @@
 #include "EndLevelLayer.hpp"
 #include "PlayLayer.hpp"
-
+#include <cosmella.endscreen-rewards/include/EndscreenStat.hpp>
 #include "../Other/JamManager.hpp"
 
 void resetScaleAction(CCNode* node, float delay, float scale) {
@@ -74,6 +74,34 @@ void ProEndLevelLayer::showLayer(bool instant) {
 	if (f->m_jamReward <= 0) {
 		return;
 	}
+
+	if (auto node = m_mainLayer->getChildByID(ESR_StatsContainerID)){
+		auto icon = CCSprite::create("jam1.png"_spr);
+		icon->setScale(0.375f);
+		auto stat = ESR::EndscreenStat::create(
+            icon,
+            f->m_jamReward,
+            "jam-container"_spr,
+			nullptr,
+            [](EndLevelLayer* endLevelLayer, cocos2d::CCNode* StatNode, float AnimationDelay){
+               StatNode->runAction(CCSequence::create(
+					CCDelayTime::create(AnimationDelay >= 0.7f ? AnimationDelay - 0.7f : AnimationDelay),
+					CallFuncExt::create([] {
+						FMODAudioEngine::get()->playEffect("lid.mp3"_spr, 0.7f, 1.f, 0.4f);
+						FMODAudioEngine::get()->playEffect("magicExplosion.ogg", 1.4f, 1.f, 0.24f);
+					}),
+					nullptr
+				));
+				StatNode->runAction(CCSequence::create(
+					CCDelayTime::create(AnimationDelay + 0.2f),
+					CCCallFunc::create(endLevelLayer, callfunc_selector(ProEndLevelLayer::addRewardLayer)),
+					nullptr
+				));
+            }
+        );
+		node->addChild(stat, 1); 
+		return;
+	};
 	
 	auto starContainer = m_mainLayer->getChildByID("star-container");
 	auto orbContainer = m_mainLayer->getChildByID("orb-container");
