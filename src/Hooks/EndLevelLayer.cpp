@@ -78,7 +78,7 @@ void ProEndLevelLayer::showLayer(bool instant) {
 	if (auto node = m_mainLayer->getChildByID(ESR_StatsContainerID)){
 		auto icon = CCSprite::create("jam1.png"_spr);
 		icon->setScale(0.375f);
-		auto stat = ESR::EndscreenStat::create(
+		f->m_jamContainer = ESR::EndscreenStat::create(
             icon,
             f->m_jamReward,
             "jam-container"_spr,
@@ -99,7 +99,7 @@ void ProEndLevelLayer::showLayer(bool instant) {
 				));
             }
         );
-		node->addChild(stat, 1); 
+		node->addChild(f->m_jamContainer, 1); 
 		return;
 	};
 	
