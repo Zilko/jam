@@ -1,5 +1,5 @@
 {
-	"geode": "5.5.2",
+	"geode": "5.9.0",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "zilko.jam",
 	"name": "Jam",
-	"version": "v1.0.7",
+	"version": "v1.0.8",
 	"developer": "Zilko",
 	"description": "add a new jam stat to your game",
 	"early-load": true,
@@ -21,7 +21,7 @@
 	],
 	"dependencies": {
     	"geode.node-ids": ">=v1.23.0",
-	  	"capeling.garage-stats-menu": ">=v1.3.1-beta.2"
+	  	"capeling.garage-stats-menu": ">=v2.0.0"
 	},
 	"resources": {
 		"sprites": [
